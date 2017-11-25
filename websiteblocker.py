@@ -1,5 +1,8 @@
+#! python3
+
 import gc
-import webblockbackend
+import webblockbackend as wbb
+import shutil
 try:
     import tkinter as tk
 except ImportError:
@@ -8,7 +11,8 @@ except ImportError:
 
 """
 This version is run through a GUI and is toggleable. Websites can be added or
-removed through the GUI. It will also make a backup of your hosts file.
+removed through the GUI. It will also make a backup of your hosts file in the
+local directory.
 """
 
 gc.enable()
@@ -16,7 +20,9 @@ gc.enable()
 hosts_temp = 'hosts'
 hosts_path = r"C:\Windows\System32\drivers\etc\hosts"
 redirect = '127.0.0.1'
-website_list = webblockbackend.get_website_list()
+website_list = wbb.get_website_list()
+
+shutil.copy2(r"C:\Windows\System32\drivers\etc\hosts", "./hosts")
 
 
 # function tied to <<ListboxSelect>> event
@@ -32,7 +38,7 @@ def get_selected_row(event):
 # populates the listbox
 def view_command():
     blockedList.delete(0, tk.END)  # clear the box each time
-    for row in webblockbackend.view():
+    for row in wbb.view():
         blockedList.insert(tk.END, row)
 
 
@@ -60,9 +66,9 @@ def unblock_site():
 
 # adds a site to the list and updates the listbox
 def add_command():
-    webblockbackend.insert(addEntryValue.get())
+    wbb.insert(addEntryValue.get())
     blockedList.delete(0, tk.END)
-    for row in webblockbackend.view():
+    for row in wbb.view():
         blockedList.insert(tk.END, row)
 
 
@@ -70,9 +76,9 @@ def add_command():
 def delete_command():
     try:
         global selected_tuple
-        webblockbackend.delete(selected_tuple[0])
+        wbb.delete(selected_tuple[0])
         blockedList.delete(0, tk.END)
-        for row in webblockbackend.view():
+        for row in wbb.view():
             blockedList.insert(tk.END, row)
     except NameError:
         pass
